@@ -2,9 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
     <title>Home Page</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'user/main.css' %}" type="text/css"/>
 </head>
 <body>
-  Welcome
+    {% include 'user/header.html' %}
+
+    <div class="posts-container">
+        {% for item in posts %}
+        <div class="card my-1 mx-4 col-lg-6">
+          <div class="card-body">
+              <h5>{{ item.text }}</h5>
+              <p>Created: {{ item.created_at }}</p>
+              <p>Last Updated: {{ item.updated_at }}</p>
+          </div>
+        </div>
+        {% endfor %}
+        <a href="{% url 'create-post' %}" class="btn btn-primary">New Post</a>
+    </div>
 </body>
 </html>
