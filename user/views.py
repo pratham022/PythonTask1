@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Post
 import datetime
+from django.http import HttpResponse
 
 def login_page(request):
     context = {}
@@ -41,7 +42,7 @@ def logout_user(request):
 
 @login_required(login_url='login')
 def home_page(request):
-    user_posts = Post.objects.all()
+    user_posts = Post.objects.filter(user=request.user)
     context = {
         'posts': user_posts
     }
@@ -68,3 +69,23 @@ def add_post(request):
         'form': post_form
     }
     return render(request, 'user/add_post.html', context)
+
+
+def edit_post(request, id):
+    curr_post = Post.objects.get(id=id)
+    formset = PostForm(instance=curr_post)
+    if request.method == 'POST':
+        formset = PostForm(request.POST, instance=curr_post)
+        if formset.is_valid():
+            new_formset = formset.save(commit=False)
+            new_formset.updated_at = datetime.datetime.now()
+            new_formset.save()
+            return redirect('home')
+    context = {'form': formset}
+    return render(request, 'user/edit_post.html', context)
+
+
+def delete_post(request, id):
+    curr_post = Post.objects.get(id=id)
+    curr_post.delete()
+    return redirect('home')
